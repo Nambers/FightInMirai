@@ -45,6 +45,6 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("随机群名片列表")
     val nameCards by value(listOf("a", "b"))
 
-    @ValueDescription("如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 是@发起人, 如果存在多个值就回复随机一个")
+    @ValueDescription("如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
     val respondWhenTargetIsBot by value(listOf("{usrat}..."))
 }
