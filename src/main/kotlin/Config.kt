@@ -36,7 +36,7 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("反应, Mute = 禁言/ Kick = 踢出/ Admin = 提升成管理员 / NameCard = 更改成名片列表中随机一个")
     val reaction: Reaction by value(Reaction.Mute)
 
-    @ValueDescription("禁言时间, 当reaction == 1时生效, 单位ms")
+    @ValueDescription("禁言时间, 当reaction == Mute时生效, 单位ms")
     val muteTime by value(10)
 
     @ValueDescription("结束后发送, {winat} 和 {loseat}代表结果")
