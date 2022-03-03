@@ -14,14 +14,18 @@ triggers:
   - 击剑
 # 反应, Mute = 禁言/ Kick = 踢出/ Admin = 提升成管理员 / NameCard = 更改成名片列表中随机一个
 reaction: NameCard
-# 禁言时间, 当reaction == 1时生效, 单位ms
+# 禁言时间, 当reaction == Mute时生效, 单位ms
 muteTime: 10
-# 结束后发送, {winat} 和 {loseat}代表结果
-respond: '{winat}a'
+# 就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个
+respond: 
+  - '{usrat}{winat}aa'
 # 随机群名片列表
 nameCards: 
   - a
   - b
+# 如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个
+respondWhenTargetIsBot: 
+  - '{usrat}...'
 ```
 
 ## license
