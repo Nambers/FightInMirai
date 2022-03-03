@@ -20,8 +20,8 @@ package tech.eritquearcus.fight
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.MemberPermission
 import net.mamoe.mirai.contact.NormalMember
-import net.mamoe.mirai.contact.isAdministrator
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.event.globalEventChannel
@@ -49,14 +49,14 @@ private suspend fun react(m1: NormalMember, m2: NormalMember) = (if (Random.next
 object Fight : KotlinPlugin(
     JvmPluginDescription(
         id = "tech.eritquearcus.fight",
-        version = "1.0-SNAPSHOT",
+        version = "1.0.0",
     )
 ) {
     override fun onEnable() {
         Config.reload()
         logger.info { "config path:$configFolder/config.json" }
         globalEventChannel().subscribeAlways<GroupMessageEvent> {
-            if(!this.group.botAsMember.isAdministrator()){
+            if (this.group.botAsMember.permission < MemberPermission.ADMINISTRATOR) {
                 logger.error("bot没有权限, group(${group.id})")
                 return@subscribeAlways
             }
@@ -69,7 +69,7 @@ object Fight : KotlinPlugin(
         if (Config.triggerType >= Trigger.Nudge) {
             globalEventChannel().subscribeAlways<NudgeEvent> {
                 if (this.subject is Group){
-                    if(!(this.subject as Group).botAsMember.isAdministrator()){
+                    if ((this.subject as Group).botAsMember.permission < MemberPermission.ADMINISTRATOR) {
                         logger.error("bot没有权限, group(${(this.subject as Group).id})")
                     }
                     this.subject.sendMessage(react(this.target as NormalMember, this.from as NormalMember))
