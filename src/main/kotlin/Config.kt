@@ -39,9 +39,12 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("禁言时间, 当reaction == Mute时生效, 单位ms")
     val muteTime by value(10)
 
-    @ValueDescription("结束后发送, {winat} 和 {loseat}代表结果")
-    val respond by value("{winat}aa")
+    @ValueDescription("就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
+    val respond by value(listOf("{usrat}{winat}aa"))
 
     @ValueDescription("随机群名片列表")
     val nameCards by value(listOf("a", "b"))
+
+    @ValueDescription("如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 是@发起人, 如果存在多个值就回复随机一个")
+    val respondWhenTargetIsBot by value(listOf("{usrat}..."))
 }

@@ -33,28 +33,38 @@ import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.utils.info
 import kotlin.random.Random
 
-private suspend fun react(m1: NormalMember, m2: NormalMember) = (if (Random.nextBoolean()) m1 else m2).apply {
-    if(this.id == bot.id){
-        Fight.logger.error("Bot can not operate itself")
-        return@apply
+// m1 sender, m2 at subject
+private suspend fun react(m1: NormalMember, m2: NormalMember) =
+    (if (m2 == m2.bot) m1 else if (Random.nextBoolean()) m1 else m2).apply {
+        if (this.id == bot.id) {
+            Fight.logger.error("Bot can not operate itself")
+            return@apply
+        }
+        when (Config.reaction) {
+            Reaction.Mute -> this.mute(Config.muteTime)
+            Reaction.Kick -> this.kick("u are fail to fight")
+            Reaction.Admin -> this.modifyAdmin(true)
+            Reaction.NameCard -> this.nameCard = Config.nameCards.random()
+        }
+    }.let {
+        val r = (if (m2 == m2.bot) Config.respond
+        else Config.respondWhenTargetIsBot)
+            .random()
+            .replace("{winat}", it.at().serializeToMiraiCode())
+            .replace("{loseat}", (if (it == m2) m1 else m2).at().serializeToMiraiCode())
+            .replace("{usrat}", m1.at().serializeToMiraiCode())
+        MiraiCode.deserializeMiraiCode(r)
     }
-    when (Config.reaction) {
-        Reaction.Mute -> this.mute(Config.muteTime)
-        Reaction.Kick -> this.kick("u are fail to fight")
-        Reaction.Admin -> this.modifyAdmin(true)
-        Reaction.NameCard -> this.nameCard = Config.nameCards.random()
-    }
-}.let { MiraiCode.deserializeMiraiCode(Config.respond.replace("{winat}", it.at().serializeToMiraiCode()).replace("{loseat}", (if(it == m2) m1 else m2).at().serializeToMiraiCode())) }
 
 object Fight : KotlinPlugin(
     JvmPluginDescription(
         id = "tech.eritquearcus.fight",
-        version = "1.0.0",
+        version = "1.0.1",
     )
 ) {
     override fun onEnable() {
         Config.reload()
-        logger.info { "config path:$configFolder/config.json" }
+        logger.info { "config path:$configFolder\\config.json" }
         globalEventChannel().subscribeAlways<GroupMessageEvent> {
             if (this.group.botAsMember.permission < MemberPermission.ADMINISTRATOR) {
                 logger.error("bot没有权限, group(${group.id})")
@@ -68,11 +78,12 @@ object Fight : KotlinPlugin(
         }
         if (Config.triggerType >= Trigger.Nudge) {
             globalEventChannel().subscribeAlways<NudgeEvent> {
-                if (this.subject is Group){
-                    if ((this.subject as Group).botAsMember.permission < MemberPermission.ADMINISTRATOR) {
+                if (this.subject is Group) {
+                    val g = this.subject as Group
+                    if (g.botAsMember.permission < MemberPermission.ADMINISTRATOR) {
                         logger.error("bot没有权限, group(${(this.subject as Group).id})")
                     }
-                    this.subject.sendMessage(react(this.target as NormalMember, this.from as NormalMember))
+                    this.subject.sendMessage(react(g[this.from.id]!!, g[this.target.id]!!))
                 }
             }
         }
