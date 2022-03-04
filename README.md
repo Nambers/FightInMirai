@@ -16,16 +16,27 @@ triggers:
 reaction: NameCard
 # 禁言时间, 当reaction == Mute时生效, 单位ms
 muteTime: 10
-# 就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个
+# NormalRespond, 如果RespondType == Normal就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个
 respond: 
   - '{usrat}{winat}aa'
 # 随机群名片列表
 nameCards: 
   - a
   - b
-# 如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个
+# 如果对bot发起,就对对方实现reaction然后回复本项,替换规则同NormalRespond
 respondWhenTargetIsBot: 
   - '{usrat}...'
+# 回复类型, Normal = 回复respond其中一个 / SuccessOrFail = 如果发起人成功就回复successResponds中一个否则就failResponds
+respondType: SuccessOrFail
+# 如果respondType = SuccessOrFail时候, 发起人成功时发送, 替换规则同NormalRespond
+successResponds: 
+  - '{usrat}S'
+# 如果respondType = SuccessOrFail时候, 发起人失败时发送,替换规则同NormalRespond
+failResponds: 
+  - 'F'
+# 如果reaction是踢出, 踢出信息为随机其中一条
+kickMessages: 
+  - 'k'
 ```
 
 ## license
