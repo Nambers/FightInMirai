@@ -23,8 +23,12 @@ import net.mamoe.mirai.console.data.value
 enum class Reaction{
     Mute, Kick, Admin, NameCard
 }
-enum class Trigger{
+enum class Trigger {
     At, Nudge, Both
+}
+
+enum class RespondType {
+    Normal, Success, Fail
 }
 object Config: AutoSavePluginConfig("config") {
     @ValueDescription("触发条件, 现在支持:At/Nudge = 戳一戳/Both = At + nudge")
@@ -39,7 +43,7 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("禁言时间, 当reaction == Mute时生效, 单位ms")
     val muteTime by value(10)
 
-    @ValueDescription("就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
+    @ValueDescription("NormalRespond, 如果RespondType == Normal就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
     val respond by value(listOf("{usrat}{winat}aa"))
 
     @ValueDescription("随机群名片列表")
@@ -47,4 +51,16 @@ object Config: AutoSavePluginConfig("config") {
 
     @ValueDescription("如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
     val respondWhenTargetIsBot by value(listOf("{usrat}..."))
+
+    @ValueDescription("回复类型, Normal, Fail, Success")
+    val respondType by value(RespondType.Normal)
+
+    @ValueDescription("如果respondType == Success, 发送随机其中一条, 替换规则同NormalRespond")
+    val successResponds by value(listOf(""))
+
+    @ValueDescription("如果respondType == Fail, 发送其中随机一条, 替换规则同NormalRespond")
+    val failResponds by value(listOf(""))
+
+    @ValueDescription("如果reaction是踢出, 踢出信息为随机其中一条")
+    val kickMessages by value(listOf(""))
 }

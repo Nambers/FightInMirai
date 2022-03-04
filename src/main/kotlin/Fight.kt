@@ -33,27 +33,35 @@ import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.utils.info
 import kotlin.random.Random
 
+private fun getRespond(m1: NormalMember, m2: NormalMember, success: Boolean): String {
+    val w = if (success) m1 else m2 // winners
+    return (if (m2.id == m2.bot.id) Config.respondWhenTargetIsBot
+    else when (Config.respondType) {
+        RespondType.Normal -> Config.respond
+        RespondType.Success -> Config.successResponds
+        RespondType.Fail -> Config.failResponds
+    })
+        .random()
+        .replace("{winat}", w.at().serializeToMiraiCode())
+        .replace("{loseat}", (if (w == m2) m1 else m2).at().serializeToMiraiCode())
+        .replace("{usrat}", w.at().serializeToMiraiCode())
+}
+
 // m1 sender, m2 at subject
 private suspend fun react(m1: NormalMember, m2: NormalMember) =
-    (if (m2 == m2.bot) m1 else if (Random.nextBoolean()) m1 else m2).apply {
+    (if (m2.id == m2.bot.id) m1 else (if (Random.nextBoolean()) m1 else m2)).apply {
         if (this.id == bot.id) {
             Fight.logger.error("Bot can not operate itself")
             return@apply
         }
         when (Config.reaction) {
             Reaction.Mute -> this.mute(Config.muteTime)
-            Reaction.Kick -> this.kick("u are fail to fight")
+            Reaction.Kick -> this.kick(Config.kickMessages.random())
             Reaction.Admin -> this.modifyAdmin(true)
             Reaction.NameCard -> this.nameCard = Config.nameCards.random()
         }
     }.let {
-        val r = (if (m2 == m2.bot) Config.respond
-        else Config.respondWhenTargetIsBot)
-            .random()
-            .replace("{winat}", it.at().serializeToMiraiCode())
-            .replace("{loseat}", (if (it == m2) m1 else m2).at().serializeToMiraiCode())
-            .replace("{usrat}", m1.at().serializeToMiraiCode())
-        MiraiCode.deserializeMiraiCode(r)
+        MiraiCode.deserializeMiraiCode(getRespond(m1, m2, it == m1))
     }
 
 object Fight : KotlinPlugin(
