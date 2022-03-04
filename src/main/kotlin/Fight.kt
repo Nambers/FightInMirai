@@ -38,8 +38,7 @@ private fun getRespond(m1: NormalMember, m2: NormalMember, success: Boolean): St
     return (if (m2.id == m2.bot.id) Config.respondWhenTargetIsBot
     else when (Config.respondType) {
         RespondType.Normal -> Config.respond
-        RespondType.Success -> Config.successResponds
-        RespondType.Fail -> Config.failResponds
+        RespondType.SuccessOrFail -> if (success) Config.successResponds else Config.failResponds
     })
         .random()
         .replace("{winat}", w.at().serializeToMiraiCode())
@@ -67,7 +66,7 @@ private suspend fun react(m1: NormalMember, m2: NormalMember) =
 object Fight : KotlinPlugin(
     JvmPluginDescription(
         id = "tech.eritquearcus.fight",
-        version = "1.0.1",
+        version = "1.0.2",
     )
 ) {
     override fun onEnable() {

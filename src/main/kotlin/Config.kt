@@ -28,7 +28,7 @@ enum class Trigger {
 }
 
 enum class RespondType {
-    Normal, Success, Fail
+    Normal, SuccessOrFail
 }
 object Config: AutoSavePluginConfig("config") {
     @ValueDescription("触发条件, 现在支持:At/Nudge = 戳一戳/Both = At + nudge")
@@ -49,16 +49,16 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("随机群名片列表")
     val nameCards by value(listOf("a", "b"))
 
-    @ValueDescription("如果对bot发起fight就对对方实现reaction然后回复,{winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
+    @ValueDescription("如果对bot发起,就对对方实现reaction然后回复本项,替换规则同NormalRespond")
     val respondWhenTargetIsBot by value(listOf("{usrat}..."))
 
-    @ValueDescription("回复类型, Normal, Fail, Success")
+    @ValueDescription("回复类型, Normal = 回复respond其中一个 / SuccessOrFail = 如果发起人成功就回复successResponds中一个否则就failResponds")
     val respondType by value(RespondType.Normal)
 
-    @ValueDescription("如果respondType == Success, 发送随机其中一条, 替换规则同NormalRespond")
+    @ValueDescription("如果respondType = SuccessOrFail时候, 发起人成功时发送, 替换规则同NormalRespond")
     val successResponds by value(listOf(""))
 
-    @ValueDescription("如果respondType == Fail, 发送其中随机一条, 替换规则同NormalRespond")
+    @ValueDescription("如果respondType = SuccessOrFail时候, 发起人失败时发送,替换规则同NormalRespond")
     val failResponds by value(listOf(""))
 
     @ValueDescription("如果reaction是踢出, 踢出信息为随机其中一条")
