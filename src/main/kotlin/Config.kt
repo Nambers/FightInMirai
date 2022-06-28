@@ -40,7 +40,7 @@ object Config: AutoSavePluginConfig("config") {
     @ValueDescription("反应, Mute = 禁言/ Kick = 踢出/ Admin = 提升成管理员 / NameCard = 更改成名片列表中随机一个")
     val reaction: Reaction by value(Reaction.Mute)
 
-    @ValueDescription("禁言时间, 当reaction == Mute时生效, 单位ms")
+    @ValueDescription("禁言时间, 当reaction == Mute时生效, 单位秒")
     val muteTime by value(10)
 
     @ValueDescription("NormalRespond, 如果RespondType == Normal就在结束后发送, {winat} 和 {loseat}会被自动替换成@赢的人和@输的人, {usrat} 被替换成@发起人, 如果存在多个值就回复随机一个")
